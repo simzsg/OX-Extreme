@@ -89,7 +89,7 @@ export default function Background3D() {
           if (object.geometry) object.geometry.dispose()
           if (object.material) {
             if (Array.isArray(object.material)) {
-              object.material.forEach((m) => m.dispose())
+              object.material.forEach((m: any) => m.dispose())
             } else {
               object.material.dispose()
             }

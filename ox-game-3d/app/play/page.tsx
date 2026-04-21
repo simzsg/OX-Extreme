@@ -11,7 +11,7 @@ const Game3D = dynamic(() => import("../components/Game3D"), { ssr: false })
 
 export default function PlayPage() {
   const { data: session, status, update } = useSession()
-  const { board, currentPlayer, setSquare, winner, setWinner, isBotThinking, setIsBotThinking, resetBoard, playerSide, setPlayerSide, matchStats, updateMatchStats, recentGames } = useGameStore()
+  const { board, currentPlayer, setSquare, winner, setWinner, isBotThinking, setIsBotThinking, resetBoard, playerSide, setPlayerSide, matchStats, updateMatchStats, recentGames, initMatchStats } = useGameStore()
   const [scoreUpdate, setScoreUpdate] = useState<{ score: number, streak: number } | null>(null)
   const mountedRef = useRef(true)
   const botTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -24,7 +24,17 @@ export default function PlayPage() {
     }
   }, [status])
 
-  // Cleanup: reset everything when leaving the page
+  useEffect(() => {
+    if (session?.user) {
+      initMatchStats({
+        wins: session.user.wins || 0,
+        losses: session.user.losses || 0,
+        draws: session.user.draws || 0,
+      })
+    }
+  }, [session, initMatchStats])
+
+  
   useEffect(() => {
     mountedRef.current = true
     return () => {

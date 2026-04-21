@@ -17,6 +17,7 @@ interface GameState {
   setWinner: (winner: Player | "Tie" | null) => void
   setIsBotThinking: (thinking: boolean) => void
   setPlayerSide: (side: Player) => void
+  initMatchStats: (stats: { wins: number, losses: number, draws: number }) => void
   updateMatchStats: (result: "win" | "lose" | "tie") => void
   resetBoard: () => void
 }
@@ -44,6 +45,13 @@ export const useGameStore = create<GameState>((set) => ({
   setWinner: (winner) => set({ winner }),
   setIsBotThinking: (isBotThinking) => set({ isBotThinking }),
   setPlayerSide: (side) => set({ playerSide: side, currentPlayer: side ?? "X" }),
+  initMatchStats: (stats) => set((state) => {
+    
+    if (state.matchStats.wins === 0 && state.matchStats.losses === 0 && state.matchStats.draws === 0) {
+      return { matchStats: stats }
+    }
+    return {}
+  }),
   updateMatchStats: (result) => set((state) => {
     const newRecent = [result, ...state.recentGames].slice(0, 10)
     return {

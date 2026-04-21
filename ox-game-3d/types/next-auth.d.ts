@@ -9,11 +9,17 @@ declare module "next-auth" {
       image?: string | null
       score: number
       winStreak: number
+      wins: number
+      losses: number
+      draws: number
     }
   }
 
   interface User {
     score: number
     winStreak: number
+    wins: number
+    losses: number
+    draws: number
   }
 }

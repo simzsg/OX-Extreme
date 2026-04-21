@@ -183,7 +183,7 @@ function Scene() {
         enableDamping
       />
 
-      <EffectComposer disableNormalPass>
+      <EffectComposer>
         <Bloom luminanceThreshold={0.8} intensity={1} radius={0.3} />
         <Vignette offset={0.2} darkness={1.1} />
       </EffectComposer>

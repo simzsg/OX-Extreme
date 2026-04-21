@@ -16,7 +16,7 @@ export default function WebglBodyguard() {
         sessionStorage.removeItem('was_in_game')
        
         setTimeout(() => {
-          if (window.performance.getEntriesByType("navigation")[0]?.type !== "reload") {
+          if ((window.performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming)?.type !== "reload") {
             window.location.reload()
           }
         }, 100)
