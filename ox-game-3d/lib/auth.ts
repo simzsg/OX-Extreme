@@ -5,11 +5,9 @@ import DiscordProvider from "next-auth/providers/discord"
 import FacebookProvider from "next-auth/providers/facebook"
 import LineProvider from "next-auth/providers/line"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID || "mock-github-id",
@@ -38,14 +36,15 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username) return null
-        let user = await prisma.user.findFirst({
-          where: { name: credentials.username }
+        const email = `${credentials.username}@example.com`
+        let user = await prisma.user.findUnique({
+          where: { email }
         })
         if (!user) {
           user = await prisma.user.create({
             data: {
               name: credentials.username,
-              email: `${credentials.username}@example.com`,
+              email,
             }
           })
         }
@@ -54,7 +53,10 @@ export const authOptions: NextAuthOptions = {
           name: user.name, 
           email: user.email,
           score: user.score,
-          winStreak: user.winStreak
+          winStreak: user.winStreak,
+          wins: user.wins,
+          losses: user.losses,
+          draws: user.draws
         }
       }
     })
@@ -75,6 +77,9 @@ export const authOptions: NextAuthOptions = {
           session.user.id = dbUser.id
           session.user.score = dbUser.score
           session.user.winStreak = dbUser.winStreak
+          session.user.wins = dbUser.wins
+          session.user.losses = dbUser.losses
+          session.user.draws = dbUser.draws
         }
       }
       return session

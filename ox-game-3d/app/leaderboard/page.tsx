@@ -19,7 +19,10 @@ export default async function LeaderboardPage() {
           <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-widest drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
             STANDINGS
           </h1>
-          <Link href="/" className="px-6 py-2 bg-transparent hover:bg-red-900/30 text-red-500 rounded-none transition-colors border border-red-900 hover:border-red-500 uppercase tracking-widest text-sm font-bold">
+          <Link 
+            href="/"
+            className="px-6 py-2 bg-transparent hover:bg-red-900/30 text-red-500 rounded-none transition-colors border border-red-900 hover:border-red-500 uppercase tracking-widest text-sm font-bold flex items-center justify-center"
+          >
             System Core
           </Link>
         </div>

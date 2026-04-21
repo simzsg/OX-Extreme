@@ -2,30 +2,29 @@
 
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Float, Grid } from "@react-three/drei"
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useMemo, useState } from "react"
 import type { Group } from "three"
-
+import * as THREE from "three"
 
 const mouse = { x: 0, y: 0 }
 
-
-const items = Array.from({ length: 50 }).map(() => ({
-  position: [
-    (Math.random() - 0.5) * 30,
-    (Math.random() - 0.5) * 20 + 2,
-    (Math.random() - 0.5) * 20 - 5
-  ] as [number, number, number],
-  rotation: [
-    Math.random() * Math.PI,
-    Math.random() * Math.PI,
-    0
-  ] as [number, number, number],
-  scale: Math.random() * 0.6 + 0.2,
-  isX: Math.random() > 0.5
-}))
-
 function Particles() {
   const group = useRef<Group>(null)
+
+  const items = useMemo(() => Array.from({ length: 50 }).map(() => ({
+    position: [
+      (Math.random() - 0.5) * 30,
+      (Math.random() - 0.5) * 20 + 2,
+      (Math.random() - 0.5) * 20 - 5
+    ] as [number, number, number],
+    rotation: [
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+      0
+    ] as [number, number, number],
+    scale: Math.random() * 0.6 + 0.2,
+    isX: Math.random() > 0.5
+  })), [])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -72,28 +71,70 @@ function Particles() {
 }
 
 export default function Background3D() {
+  const [canvasKey, setCanvasKey] = useState<number | null>(null)
+  const sceneRef = useRef<THREE.Scene>(null)
+  const glRef = useRef<THREE.WebGLRenderer>(null)
+
+  useEffect(() => {
+    // Delay Canvas creation to let any old WebGL context fully clean up
+    const timer = setTimeout(() => setCanvasKey(Date.now()), 100)
+    
+    return () => {
+      clearTimeout(timer)
+      setCanvasKey(null)
+
+   
+      if (sceneRef.current) {
+        sceneRef.current.traverse((object: any) => {
+          if (object.geometry) object.geometry.dispose()
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((m) => m.dispose())
+            } else {
+              object.material.dispose()
+            }
+          }
+        })
+      }
+      if (glRef.current) {
+        glRef.current.dispose()
+        glRef.current.forceContextLoss()
+      }
+    }
+  }, [])
+
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }} dpr={[1, 2]}>
-        <ambientLight intensity={0.2} />
-        <directionalLight position={[5, 10, 5]} intensity={1.5} color="#ff0000" />
-        <pointLight position={[-10, 0, -5]} intensity={6} color="#ffffff" distance={25} />
-        <pointLight position={[0, -5, 5]} intensity={3} color="#ef4444" distance={15} />
-        
-        <Particles />
-        
-        <Grid 
-          position={[0, -6, 0]} 
-          args={[80, 80]} 
-          cellColor="#ff0000" 
-          sectionColor="#991b1b" 
-          sectionSize={3} 
-          fadeDistance={35}
-          cellThickness={0.7}
-        />
-        
-        <fog attach="fog" args={["#000000", 12, 30]} />
-      </Canvas>
+      {canvasKey && (
+        <Canvas 
+          key={canvasKey}
+          camera={{ position: [0, 0, 10], fov: 50 }} 
+          dpr={[1, 2]}
+          onCreated={({ gl, scene }) => {
+            (glRef as any).current = gl;
+            (sceneRef as any).current = scene;
+          }}
+        >
+          <ambientLight intensity={0.2} />
+          <directionalLight position={[5, 10, 5]} intensity={1.5} color="#ff0000" />
+          <pointLight position={[-10, 0, -5]} intensity={6} color="#ffffff" distance={25} />
+          <pointLight position={[0, -5, 5]} intensity={3} color="#ef4444" distance={15} />
+          
+          <Particles />
+          
+          <Grid 
+            position={[0, -6, 0]} 
+            args={[80, 80]} 
+            cellColor="#ff0000" 
+            sectionColor="#991b1b" 
+            sectionSize={3} 
+            fadeDistance={35}
+            cellThickness={0.7}
+          />
+          
+          <fog attach="fog" args={["#000000", 12, 30]} />
+        </Canvas>
+      )}
     </div>
   )
 }

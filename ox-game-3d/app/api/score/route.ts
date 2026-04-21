@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function POST(request: Request) {
@@ -17,25 +17,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    let { score, winStreak } = user
+    let { score, winStreak, wins, losses, draws } = user
 
     if (result === "win") {
       score += 1
       winStreak += 1
+      wins += 1
       if (winStreak === 3) {
         score += 1
         winStreak = 0
       }
     } else if (result === "lose") {
-      score -= 1
+      score = Math.max(0, score - 1)
       winStreak = 0
+      losses += 1
     } else if (result === "tie") {
       winStreak = 0
+      draws += 1
     }
 
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { score, winStreak }
+      data: { score, winStreak, wins, losses, draws }
     })
 
     return NextResponse.json({

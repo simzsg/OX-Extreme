@@ -1,122 +1,220 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Text3D, Center, Float, ContactShadows, Environment } from "@react-three/drei"
+import { OrbitControls, ContactShadows, Environment, MeshTransmissionMaterial, Float } from "@react-three/drei"
+import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing"
 import { useGameStore } from "@/lib/store"
 import { Player } from "@/lib/game-logic"
-import { Suspense, useState } from "react"
+import { Suspense, useState, useEffect, useRef, useMemo } from "react"
+import * as THREE from "three"
 
-
-function Piece({ type, position, isWinning }: { type: Player, position: [number, number, number], isWinning: boolean }) {
-  if (!type) return null
-  
-  return (
-    <Float floatIntensity={isWinning ? 5 : 1} rotationIntensity={isWinning ? 1 : 0.2}>
-      <mesh position={position}>
-        {type === "X" ? (
-          <Text3D
-            font="/fonts/Inter_Bold.json"
-            size={0.8}
-            height={0.2}
-            curveSegments={12}
-            bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.02}
-            bevelOffset={0}
-            bevelSegments={5}
-          >
-            X
-            <meshStandardMaterial color={isWinning ? "#ff0000" : "#ef4444"} metalness={0.8} roughness={0.2} emissive={isWinning ? "#ff0000" : "#7f1d1d"} emissiveIntensity={isWinning ? 2 : 0.8} />
-          </Text3D>
-        ) : (
-          <mesh>
-            <torusGeometry args={[0.4, 0.15, 16, 32]} />
-            <meshStandardMaterial color={isWinning ? "#ffffff" : "#d4d4d8"} metalness={0.9} roughness={0.1} emissive={isWinning ? "#ffffff" : "#27272a"} emissiveIntensity={isWinning ? 2 : 0.2} />
-          </mesh>
-        )}
-      </mesh>
-    </Float>
-  )
-}
-
-function Board() {
-  const { board, setSquare, currentPlayer, winner, isBotThinking } = useGameStore()
-  const [hovered, setHovered] = useState<number | null>(null)
-
-  const handleCellClick = (index: number) => {
-    if (winner || board[index] || currentPlayer !== "X" || isBotThinking) return
-    setSquare(index, "X")
-  }
-
-  const cells = []
-  for (let i = 0; i < 9; i++) {
-    const row = Math.floor(i / 3)
-    const col = i % 3
-    const x = (col - 1) * 1.5
-    const z = (row - 1) * 1.5
-
-    cells.push(
-      <group key={i} position={[x, 0, z]}>
-        <mesh
-          position={[0, -0.2, 0]}
-          onClick={() => handleCellClick(i)}
-          onPointerOver={(e) => { e.stopPropagation(); setHovered(i) }}
-          onPointerOut={(e) => { e.stopPropagation(); setHovered(null) }}
-        >
-          <boxGeometry args={[1.4, 0.4, 1.4]} />
-          <meshStandardMaterial
-            color={hovered === i && !board[i] && currentPlayer === "X" && !winner ? "#ef4444" : "#09090b"}
-            transparent
-            opacity={0.9}
-            metalness={0.7}
-            roughness={0.2}
-          />
-        </mesh>
-        
-        {board[i] && (
-          <Center>
-            <Piece type={board[i]} position={[0, 0.3, 0]} isWinning={false} />
-          </Center>
-        )}
-      </group>
-    )
-  }
-
+function XGeometry() {
   return (
     <group>
-      {cells}
-      <mesh position={[0, -0.4, 0]}>
-        <boxGeometry args={[4.6, 0.1, 4.6]} />
-        <meshStandardMaterial color="#000000" metalness={0.9} roughness={0.1} />
+      <mesh rotation={[0, 0, Math.PI / 4]}>
+        <boxGeometry args={[0.2, 1, 0.2]} />
+        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={5} />
+      </mesh>
+      <mesh rotation={[0, 0, -Math.PI / 4]}>
+        <boxGeometry args={[0.2, 1, 0.2]} />
+        <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={5} />
       </mesh>
     </group>
   )
 }
 
-export default function Game3D() {
+function Piece({ type, isWinning }: { type: Player, isWinning: boolean }) {
+  if (!type) return null
+  
   return (
-    <div className="w-full h-full cursor-pointer relative">
-      <Canvas shadows camera={{ position: [0, 5, 4], fov: 50 }}>
-        <color attach="background" args={["transparent"]} />
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-        <pointLight position={[-10, -10, -5]} intensity={0.8} color="#ff0000" />
-        <pointLight position={[10, -10, 5]} intensity={0.3} color="#ffffff" />
+    <Float floatIntensity={isWinning ? 4 : 1} rotationIntensity={isWinning ? 2 : 0.5} speed={2}>
+      {type === "X" ? (
+        <XGeometry />
+      ) : (
+        <mesh>
+          <torusGeometry args={[0.4, 0.1, 16, 32]} />
+          <meshStandardMaterial 
+            color={isWinning ? "#ffffff" : "#ff3333"} 
+            metalness={1} 
+            roughness={0} 
+            emissive={isWinning ? "#ffffff" : "#ff0000"} 
+            emissiveIntensity={isWinning ? 10 : 2} 
+          />
+        </mesh>
+      )}
+    </Float>
+  )
+}
+
+function Board() {
+  const { board, setSquare, currentPlayer, winner, isBotThinking, playerSide } = useGameStore()
+  const [hovered, setHovered] = useState<number | null>(null)
+
+  const handleCellClick = (index: number) => {
+    if (winner || board[index] || currentPlayer !== playerSide || isBotThinking || !playerSide) return
+    setSquare(index, playerSide)
+  }
+
+  const cells = useMemo(() => {
+    const arr = []
+    for (let i = 0; i < 9; i++) {
+      const row = Math.floor(i / 3)
+      const col = i % 3
+      const x = (col - 1) * 1.6
+      const z = (row - 1) * 1.6
+      arr.push({ id: i, pos: [x, 0, z] })
+    }
+    return arr
+  }, [])
+
+  return (
+    <group>
+      {cells.map(({ id, pos }) => (
+        <group key={id} position={pos as [number, number, number]}>
+          {/* Cell Base */}
+          <mesh
+            onPointerOver={() => setHovered(id)}
+            onPointerOut={() => setHovered(null)}
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              handleCellClick(id)
+            }}
+          >
+            <boxGeometry args={[1.5, 0.1, 1.5]} />
+            <meshStandardMaterial
+              transparent
+              opacity={0.9}
+              metalness={0.8}
+              roughness={0.2}
+              color={hovered === id && !board[id] && !winner ? "#660000" : "#222222"}
+              emissive={hovered === id && !board[id] && !winner ? "#330000" : "#000000"}
+            />
+          </mesh>
+
+          {/* Glowing Border when hovered */}
+          {hovered === id && !board[id] && !winner && (
+            <mesh position={[0, 0.1, 0]}>
+              <boxGeometry args={[1.55, 0.05, 1.55]} />
+              <meshStandardMaterial color="#ff0000" emissive="#ff0000" emissiveIntensity={10} transparent opacity={0.5} />
+            </mesh>
+          )}
+          
+          {board[id] && (
+            <group position={[0, 0.6, 0]}>
+              <Piece type={board[id]} isWinning={winner === board[id]} />
+            </group>
+          )}
+        </group>
+      ))}
+
+      {/* Grid Frame */}
+      <mesh position={[0, -0.05, 0]}>
+        <boxGeometry args={[4.9, 0.02, 4.9]} />
+        <meshStandardMaterial color="#440000" metalness={1} roughness={0.2} emissive="#220000" />
+      </mesh>
+    </group>
+  )
+}
+
+function GlowingFloor() {
+  const shaderArgs = useMemo(() => ({
+    uniforms: {
+      uColor: { value: new THREE.Color("#ff0000") },
+      uOpacity: { value: 0.15 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      void main() {
+        float dist = distance(vUv, vec2(0.5));
+        float alpha = smoothstep(0.5, 0.0, dist);
+        gl_FragColor = vec4(uColor, alpha * uOpacity);
+      }
+    `
+  }), [])
+
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.8, 0]}>
+      <planeGeometry args={[20, 20]} />
+      <shaderMaterial {...shaderArgs} transparent />
+    </mesh>
+  )
+}
+
+function Scene() {
+  return (
+    <>
+      <color attach="background" args={["#050505"]} />
+      <fog attach="fog" args={["#050505", 5, 15]} />
+      
+      <ambientLight intensity={0.4} />
+      <pointLight position={[5, 5, 5]} intensity={2} color="#ffffff" />
+      <pointLight position={[-5, 5, -5]} intensity={1.5} color="#ff3333" />
+      <spotLight position={[0, 10, 0]} intensity={3} angle={0.5} penumbra={1} castShadow color="#ffffff" />
+
+      <Suspense fallback={null}>
+        <Board />
+        <GlowingFloor />
+        <Environment preset="city" />
         
-        <Suspense fallback={null}>
-          <Board />
-          <ContactShadows position={[0, -0.5, 0]} opacity={0.4} scale={20} blur={2} far={4} />
-          <Environment preset="city" />
-        </Suspense>
+        {/* Subtle grid instead of heavy helper */}
+        <gridHelper args={[20, 20, "#110000", "#050505"]} position={[0, -0.79, 0]} />
         
-        <OrbitControls 
-          enablePan={false} 
-          minPolarAngle={Math.PI / 4} 
-          maxPolarAngle={Math.PI / 2.5}
-          minAzimuthAngle={-Math.PI / 4}
-          maxAzimuthAngle={Math.PI / 4}
-          enableZoom={false}
-        />
+        <ContactShadows position={[0, -0.78, 0]} opacity={0.8} scale={8} blur={2} far={1} color="#000000" />
+      </Suspense>
+
+      <OrbitControls 
+        makeDefault
+        enablePan={false} 
+        minPolarAngle={Math.PI / 6} 
+        maxPolarAngle={Math.PI / 2.1}
+        minDistance={4}
+        maxDistance={10}
+        rotateSpeed={1.5}
+        dampingFactor={0.1}
+        enableDamping
+      />
+
+      <EffectComposer disableNormalPass>
+        <Bloom luminanceThreshold={0.8} intensity={1} radius={0.3} />
+        <Vignette offset={0.2} darkness={1.1} />
+      </EffectComposer>
+    </>
+  )
+}
+
+export default function Game3D() {
+  const glRef = useRef<THREE.WebGLRenderer>(null)
+
+  useEffect(() => {
+    return () => {
+      if (glRef.current) {
+        glRef.current.dispose()
+        glRef.current.forceContextLoss()
+      }
+    }
+  }, [])
+
+  return (
+    <div className="w-full h-full relative bg-black">
+      <Canvas 
+        shadows 
+        camera={{ position: [0, 6, 6], fov: 45 }}
+        onCreated={({ gl }) => { 
+          (glRef as any).current = gl;
+        }}
+        gl={{ antialias: true, stencil: false, depth: true }}
+        dpr={1}
+      >
+        <Scene />
       </Canvas>
     </div>
   )

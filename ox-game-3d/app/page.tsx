@@ -1,13 +1,15 @@
 "use client"
 
 import { useSession, signIn } from "next-auth/react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import Background3D from "./components/Background3D"
+import dynamic from "next/dynamic"
+
+const Background3D = dynamic(() => import("./components/Background3D"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 z-0 bg-black" />
+})
 
 export default function LandingPage() {
   const { data: session } = useSession()
-  const router = useRouter()
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden text-center">
@@ -46,7 +48,7 @@ export default function LandingPage() {
             
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
               <button 
-                onClick={() => router.push("/play")}
+                onClick={() => { window.location.href = "/play" }}
                 className="group relative px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-none font-bold text-xl transition-all box-glow-red flex items-center justify-center gap-3 overflow-hidden"
               >
                 <span className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full duration-500 ease-out z-0"></span>
@@ -56,9 +58,12 @@ export default function LandingPage() {
                 </svg>
               </button>
               
-              <Link href="/leaderboard" className="px-8 py-4 bg-transparent hover:bg-white/5 text-white rounded-none font-bold text-lg transition-all border border-neutral-700 hover:border-white uppercase tracking-widest flex items-center justify-center">
+              <button
+                onClick={() => { window.location.href = "/leaderboard" }}
+                className="px-8 py-4 bg-transparent hover:bg-white/5 text-white rounded-none font-bold text-lg transition-all border border-neutral-700 hover:border-white uppercase tracking-widest flex items-center justify-center"
+              >
                 LEADERBOARD
-              </Link>
+              </button>
             </div>
           </div>
         ) : (
@@ -76,9 +81,13 @@ export default function LandingPage() {
             <div className="pt-4 mt-6 border-t border-red-900/30">
               <span className="text-red-500 font-bold text-xs uppercase tracking-widest mb-4 block">Anonymous Protocol</span>
               <button 
-                onClick={() => {
+                onClick={async () => {
                   const guestId = `GUEST_${Math.floor(1000 + Math.random() * 9000)}`;
-                  signIn("credentials", { username: guestId, callbackUrl: "/play" })
+                  await signIn("credentials", { 
+                    username: guestId, 
+                    callbackUrl: "/play",
+                    redirect: true
+                  })
                 }}
                 className="w-full max-w-sm mx-auto px-8 py-4 bg-transparent hover:bg-red-950/50 text-red-400 rounded-none font-black text-lg transition-all flex items-center justify-center gap-3 border border-red-900 hover:border-red-500 uppercase tracking-widest box-glow-red"
               >

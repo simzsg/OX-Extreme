@@ -1,11 +1,15 @@
 "use client"
 import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useState, useEffect } from "react"
-import Background3D from "@/app/components/Background3D"
+import dynamic from "next/dynamic"
+
+const Background3D = dynamic(() => import("@/app/components/Background3D"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 z-0 bg-black" />
+})
 
 export default function LoginPage() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get("error")
   const [loading, setLoading] = useState<string | null>(null)
@@ -108,7 +112,7 @@ export default function LoginPage() {
         </div>
 
         <button 
-          onClick={() => router.push("/")}
+          onClick={() => { window.location.href = "/" }}
           className="mt-8 text-neutral-500 hover:text-white font-medium text-sm transition-colors block mx-auto"
         >
           Back to Home
