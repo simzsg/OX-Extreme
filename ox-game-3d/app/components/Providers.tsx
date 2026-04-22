@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react"
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // 🕵️‍♂️ Storage Proxy Interceptor
+    
       const originalSet = localStorage.setItem;
       const originalGet = localStorage.getItem;
       const originalRemove = localStorage.removeItem;
@@ -34,7 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         originalRemove.apply(this, [key]);
       };
 
-      // 🧹 Clean up any existing breadcrumbs
+      
       localStorage.removeItem("nextauth.message");
     }
   }, []);

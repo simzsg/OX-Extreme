@@ -34,13 +34,13 @@ export default function AdminPage() {
   const [matches, setMatches] = useState<MatchRecord[]>([])
   const [matchesLoading, setMatchesLoading] = useState(false)
 
-  // Persist Login Status
+ 
   useEffect(() => {
     const savedId = sessionStorage.getItem("admin_id")
     const savedPw = sessionStorage.getItem("admin_pw")
     
     if (savedId && savedPw) {
-      // Auto-validate and fetch
+   
       const validate = async () => {
         try {
           const res = await fetch("/api/admin/players", {
@@ -55,7 +55,7 @@ export default function AdminPage() {
             setPlayers(data.players)
             setIsLogged(true)
           }
-        } catch (err) { console.error(err) }
+        } catch { /* validation failed */ }
       }
       validate()
     }
@@ -70,7 +70,7 @@ export default function AdminPage() {
       })
       const data = await res.json()
       if (res.ok) setPlayers(data.players)
-    } catch (err) { console.error(err) }
+    } catch { /* connection failed */ }
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -95,7 +95,7 @@ export default function AdminPage() {
       } else {
         setError(data.error || "ACCESS DENIED")
       }
-    } catch (err) {
+    } catch {
       setError("COMMUNICATION_LINK_FAILURE")
     } finally {
       setLoading(false)
@@ -122,8 +122,8 @@ export default function AdminPage() {
         await fetchPlayers()
         setActionId(null)
       }
-    } catch (err) {
-      console.error(err)
+    } catch {
+      
     }
   }
 
@@ -139,70 +139,18 @@ export default function AdminPage() {
       })
       const data = await res.json()
       if (res.ok) setMatches(data.matches)
-    } catch (err) {
-      console.error(err)
+    } catch {
+      
     } finally {
       setMatchesLoading(false)
     }
   }
 
-  const MatchHistoryModal = () => {
-    if (!historyPlayer) return null;
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300">
-        <div className="bg-zinc-950 border border-emerald-500/30 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-[0_0_50px_rgba(16,185,129,0.1)]">
-          <div className="p-6 border-b border-emerald-500/20 flex justify-between items-center bg-emerald-500/5">
-            <div>
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter">MATCH HISTORY: {historyPlayer.name}</h2>
-              <p className="text-[10px] text-emerald-500/60 font-mono italic">ACCESSING CHRONICLES // ID: {historyPlayer.id}</p>
-            </div>
-            <button onClick={() => setHistoryPlayer(null)} className="text-white hover:text-white transition-colors p-2 text-xl">&times;</button>
-          </div>
-          
-          <div className="flex-1 overflow-auto p-6 space-y-3">
-            {matchesLoading ? (
-              <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                <div className="w-12 h-1 bg-emerald-500/20 relative overflow-hidden">
-                   <div className="absolute inset-0 bg-emerald-500 animate-slide-loading"></div>
-                </div>
-                <p className="text-[10px] text-emerald-500/40 animate-pulse font-mono">RETRIEVING_DATA_FROM_GRID...</p>
-              </div>
-            ) : matches.length === 0 ? (
-              <div className="text-center py-20 text-zinc-600 font-mono text-xs uppercase tracking-widest border border-dashed border-zinc-800">
-                No battle logs found for this entity.
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {matches.map((match) => (
-                  <div key={match.id} className="group border border-zinc-900 bg-zinc-900/20 p-4 flex justify-between items-center hover:border-emerald-500/30 transition-all">
-                    <div className="flex items-center gap-4">
-                       <div className={`w-2 h-2 rounded-full shadow-sm ${
-                         match.result === 'WIN' ? 'bg-emerald-500 shadow-emerald-500/50' : 
-                         match.result === 'LOSS' ? 'bg-red-500 shadow-red-500/50' : 'bg-yellow-500 shadow-yellow-500/50'
-                       }`}></div>
-                       <span className={`text-sm font-black tracking-widest uppercase ${
-                         match.result === 'WIN' ? 'text-emerald-400' : 
-                         match.result === 'LOSS' ? 'text-red-400' : 'text-yellow-400'
-                       }`}>{match.result}</span>
-                    </div>
-                    <span className="text-[10px] text-white font-mono">
-                      {new Date(match.createdAt).toLocaleString()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          
-          <div className="p-4 border-t border-zinc-900 bg-black/40 flex justify-end">
-          
-          </div>
-        </div>
-      </div>
-    );
-  }
+  
+  
+  
 
-  // Calculate System Stats
+  
   const totalScore = players.reduce((acc, p) => acc + p.score, 0)
   const avgStreak = players.length > 0 ? (players.reduce((acc, p) => acc + p.winStreak, 0) / players.length).toFixed(1) : 0
   const guestCount = players.filter(p => p.loginMethod === 'GUEST_PROTOCOL').length
@@ -259,7 +207,7 @@ export default function AdminPage() {
       <Background3D />
       
       <div className="z-10 w-full max-w-7xl mx-auto flex flex-col h-full bg-black/60 border border-emerald-500/20 backdrop-blur-md relative shadow-2xl">
-        {/* Header Section */}
+       
         <div className="p-8 border-b border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 bg-zinc-950/50">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
@@ -271,7 +219,7 @@ export default function AdminPage() {
             </p>
           </div>
 
-          {/* Stats Overview */}
+          
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 flex-1 w-full lg:w-auto">
              <div className="bg-zinc-900/40 p-4 border-l border-zinc-700">
                 <p className="text-[10px] text-zinc-500 uppercase mb-1">Total Users</p>
@@ -299,7 +247,7 @@ export default function AdminPage() {
           </button>
         </div>
 
-        {/* Players Management Section */}
+       
         <div className="flex-1 overflow-auto p-8">
           <div className="border border-white/5 bg-black/40 shadow-inner">
             <table className="w-full text-left border-collapse">
@@ -397,7 +345,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* System Monitoring Footer */}
+       
         <div className="p-4 bg-zinc-950/80 border-t border-white/5 text-[10px] text-zinc-600 flex justify-between uppercase tracking-widest">
         <div className="flex gap-6 italic">
           <span className="flex items-center gap-2">
@@ -415,7 +363,7 @@ export default function AdminPage() {
       </div>
     </div>
 
-    {/* Match History Modal Render */}
+ 
     {historyPlayer && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm animate-in fade-in duration-300">
         <div className="bg-zinc-950 border border-emerald-500/30 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-[0_0_50px_rgba(16,185,129,0.1)]">

@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-// ฟังก์ชันตรวจสอบสิทธิ์เบื้องต้น
+
 function verifyAdmin(request: Request) {
   const adminId = request.headers.get("x-admin-id")
   const adminPw = request.headers.get("x-admin-pw")
   return adminId === process.env.ADMINID && adminPw === process.env.ADMINPW
 }
 
-// ล้างคะแนนผู้เล่น (Reset)
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -37,7 +37,7 @@ export async function PATCH(
   }
 }
 
-// ลบผู้เล่นถาวร (Delete)
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

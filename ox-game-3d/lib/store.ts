@@ -6,13 +6,13 @@ interface GameState {
   currentPlayer: Player
   winner: Player | "Tie" | null
   isBotThinking: boolean
-  playerSide: Player // "X" or "O" or null (if not chosen)
+  playerSide: Player 
   matchStats: {
     wins: number
     losses: number
     draws: number
   }
-  recentGames: ("win" | "lose" | "tie")[] // Last 10 games
+  recentGames: ("win" | "lose" | "tie")[] 
   setSquare: (index: number, player: Player) => void
   setWinner: (winner: Player | "Tie" | null) => void
   setIsBotThinking: (thinking: boolean) => void

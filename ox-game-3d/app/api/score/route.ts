@@ -28,6 +28,7 @@ export async function POST(request: Request) {
         winStreak = 0
       }
     } else if (result === "lose") {
+      // score -= 1 
       score = Math.max(0, score - 1)
       winStreak = 0
       losses += 1
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
       draws += 1
     }
 
-    // Record Match History and Update User Stats in a transaction
+    
     const [updatedUser] = await prisma.$transaction([
       prisma.user.update({
         where: { id: user.id },

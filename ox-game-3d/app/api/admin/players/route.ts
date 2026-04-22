@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const { adminId, adminPw } = await request.json()
 
-    // 1. ตรวจสอบข้อมูลล็อกอินจาก .env
+   
     const envAdminId = process.env.ADMINID
     const envAdminPw = process.env.ADMINPW
 

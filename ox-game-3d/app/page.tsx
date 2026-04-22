@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession, signIn, signOut } from "next-auth/react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import dynamic from "next/dynamic"
 
 const Background3D = dynamic(() => import("./components/Background3D"), {
@@ -13,6 +13,17 @@ interface MatchRecord {
   id: string
   result: 'WIN' | 'LOSS' | 'DRAW'
   createdAt: string
+}
+
+interface CustomUser {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+  score: number
+  winStreak: number
+  wins: number
+  losses: number
+  draws: number
 }
 
 const MatchHistoryModal = ({ matches, onClose, loading }: { matches: MatchRecord[], onClose: () => void, loading: boolean }) => (
@@ -80,31 +91,31 @@ export default function LandingPage() {
 
         {session ? (
           <div className="space-y-8 flex flex-col items-center">
-            {/* Extended Stats Card */}
+            
             <div className="w-full bg-zinc-950/80 border border-red-900/50 shadow-inner rounded-xl divide-y divide-red-900/20 overflow-hidden">
                <div className="flex gap-6 items-center px-8 py-5 justify-center">
                   <div className="text-center">
                     <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] mb-1">Total Score</p>
-                    <p className="text-4xl font-black text-white">{session.user?.score}</p>
+                    <p className="text-4xl font-black text-white">{(session.user as CustomUser)?.score}</p>
                   </div>
                   <div className="w-px h-10 bg-red-900/30"></div>
                   <div className="text-center">
                     <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] mb-1">Win Streak</p>
-                    <p className="text-4xl font-black text-red-500 text-glow-red">{session.user?.winStreak}</p>
+                    <p className="text-4xl font-black text-red-500 text-glow-red">{(session.user as CustomUser)?.winStreak}</p>
                   </div>
                </div>
                <div className="grid grid-cols-3 gap-0 text-center bg-black/40">
                   <div className="py-3 border-r border-red-900/20">
                     <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Wins</p>
-                    <p className="text-lg font-black text-emerald-500">{(session.user as any)?.wins || 0}</p>
+                    <p className="text-lg font-black text-emerald-500">{(session.user as CustomUser)?.wins || 0}</p>
                   </div>
                   <div className="py-3 border-r border-red-900/20">
                     <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Losses</p>
-                    <p className="text-lg font-black text-red-500">{(session.user as any)?.losses || 0}</p>
+                    <p className="text-lg font-black text-red-500">{(session.user as CustomUser)?.losses || 0}</p>
                   </div>
                   <div className="py-3">
                     <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Draws</p>
-                    <p className="text-lg font-black text-yellow-500">{(session.user as any)?.draws || 0}</p>
+                    <p className="text-lg font-black text-yellow-500">{(session.user as CustomUser)?.draws || 0}</p>
                   </div>
                </div>
             </div>
@@ -120,7 +131,7 @@ export default function LandingPage() {
               
               <button 
                 onClick={async () => {
-                   // Open Personal History (Logic handled by modal state below)
+                   
                    setShowHistory(true);
                    if (matches.length === 0) fetchUserMatches();
                 }}

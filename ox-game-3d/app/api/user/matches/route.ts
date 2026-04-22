@@ -13,7 +13,7 @@ export async function GET() {
     const matches = await prisma.match.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
-      take: 20 // ดึงล่าสุด 20 แมตช์สำหรับผู้เล่น
+      take: 20 
     })
     
     return NextResponse.json({ matches })

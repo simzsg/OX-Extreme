@@ -1,8 +1,8 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, ContactShadows, Environment, MeshTransmissionMaterial, Float } from "@react-three/drei"
-import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing"
+import { OrbitControls, ContactShadows, Environment, Float } from "@react-three/drei"
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing"
 import { useGameStore } from "@/lib/store"
 import { Player } from "@/lib/game-logic"
 import { Suspense, useState, useEffect, useRef, useMemo } from "react"
@@ -71,7 +71,7 @@ function Board() {
     <group>
       {cells.map(({ id, pos }) => (
         <group key={id} position={pos as [number, number, number]}>
-          {/* Cell Base */}
+      
           <mesh
             onPointerOver={() => setHovered(id)}
             onPointerOut={() => setHovered(null)}
@@ -91,7 +91,7 @@ function Board() {
             />
           </mesh>
 
-          {/* Glowing Border when hovered */}
+       
           {hovered === id && !board[id] && !winner && (
             <mesh position={[0, 0.1, 0]}>
               <boxGeometry args={[1.55, 0.05, 1.55]} />
@@ -107,7 +107,7 @@ function Board() {
         </group>
       ))}
 
-      {/* Grid Frame */}
+     
       <mesh position={[0, -0.05, 0]}>
         <boxGeometry args={[4.9, 0.02, 4.9]} />
         <meshStandardMaterial color="#440000" metalness={1} roughness={0.2} emissive="#220000" />
@@ -165,7 +165,7 @@ function Scene() {
         <GlowingFloor />
         <Environment preset="city" />
         
-        {/* Subtle grid instead of heavy helper */}
+        
         <gridHelper args={[20, 20, "#110000", "#050505"]} position={[0, -0.79, 0]} />
         
         <ContactShadows position={[0, -0.78, 0]} opacity={0.8} scale={8} blur={2} far={1} color="#000000" />
@@ -195,10 +195,11 @@ export default function Game3D() {
   const glRef = useRef<THREE.WebGLRenderer>(null)
 
   useEffect(() => {
+    const gl = glRef.current
     return () => {
-      if (glRef.current) {
-        glRef.current.dispose()
-        glRef.current.forceContextLoss()
+      if (gl) {
+        gl.dispose()
+        gl.forceContextLoss()
       }
     }
   }, [])
@@ -209,7 +210,7 @@ export default function Game3D() {
         shadows 
         camera={{ position: [0, 6, 6], fov: 45 }}
         onCreated={({ gl }) => { 
-          (glRef as any).current = gl;
+          glRef.current = gl;
         }}
         gl={{ antialias: true, stencil: false, depth: true }}
         dpr={1}

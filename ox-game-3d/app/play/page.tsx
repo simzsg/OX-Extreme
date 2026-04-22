@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+
 import { useEffect, useState, useRef } from "react"
 import { useSession } from "next-auth/react"
 import { useGameStore } from "@/lib/store"
@@ -120,9 +122,9 @@ export default function PlayPage() {
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full border-2 border-red-500/50 overflow-hidden bg-zinc-900 flex-shrink-0 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
               {session.user?.image ? (
-                <img src={session.user.image} alt="Profile" className="w-full h-full object-cover" />
+                <Image src={session.user.image} alt="Profile" fill className="object-cover" />
               ) : (
-                <img src={`https://api.dicebear.com/7.x/bottts/svg?seed=${session.user?.name || 'Player'}&backgroundColor=09090b`} alt="Avatar" className="w-full h-full object-cover" />
+                <Image src={`https://api.dicebear.com/7.x/bottts/svg?seed=${session.user?.name || 'Player'}&backgroundColor=09090b`} alt="Avatar" fill className="object-cover" />
               )}
             </div>
             <div className="flex flex-col">
@@ -149,7 +151,7 @@ export default function PlayPage() {
         </button>
       </div>
 
-       {/* Side Statistics Sidebar */}
+       
       <div className={`absolute left-0 top-0 h-full z-40 transition-transform duration-300 ease-in-out flex pointer-events-none ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="w-72 h-full bg-black/90 backdrop-blur-3xl border-r border-red-500/20 flex flex-col p-6 pointer-events-auto overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.8)]">
           <div className="mt-32 flex-grow overflow-y-auto pr-2 custom-scrollbar">
@@ -203,7 +205,7 @@ export default function PlayPage() {
           </div>
         </div>
         
-        {/* Modern Toggle Button */}
+        
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="absolute top-40 -right-14 group h-48 w-14 bg-zinc-900/90 hover:bg-black backdrop-blur-xl border-y border-r border-red-500/30 hover:border-red-500 flex flex-col items-center justify-center gap-4 pointer-events-auto transition-all duration-300 rounded-r-xl shadow-[10px_0_30px_rgba(239,68,68,0.2)] cursor-pointer"
@@ -241,7 +243,7 @@ export default function PlayPage() {
         </div>
       )}
 
-      {/* Side Selection Overlay */}
+    
       {!playerSide && (
         <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-xl">
           <div className="flex flex-col items-center">

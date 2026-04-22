@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-// ฟังก์ชันตรวจสอบสิทธิ์แอดมิน (Reuse)
+
 function verifyAdmin(request: Request) {
   const adminId = request.headers.get("x-admin-id")
   const adminPw = request.headers.get("x-admin-pw")
@@ -22,7 +22,7 @@ export async function GET(
     const matches = await prisma.match.findMany({
       where: { userId: id },
       orderBy: { createdAt: "desc" },
-      take: 50 // ดึงล่าสุด 50 แมตช์
+      take: 50 
     })
     return NextResponse.json({ matches })
   } catch (error) {

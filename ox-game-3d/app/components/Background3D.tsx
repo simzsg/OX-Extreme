@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Float, Grid } from "@react-three/drei"
-import { useRef, useEffect, useMemo, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import type { Group } from "three"
 import * as THREE from "three"
 
@@ -11,7 +11,7 @@ const mouse = { x: 0, y: 0 }
 function Particles() {
   const group = useRef<Group>(null)
 
-  const items = useMemo(() => Array.from({ length: 50 }).map(() => ({
+  const [items] = useState(() => Array.from({ length: 50 }).map(() => ({
     position: [
       (Math.random() - 0.5) * 30,
       (Math.random() - 0.5) * 20 + 2,
@@ -24,7 +24,7 @@ function Particles() {
     ] as [number, number, number],
     scale: Math.random() * 0.6 + 0.2,
     isX: Math.random() > 0.5
-  })), [])
+  })))
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -79,26 +79,30 @@ export default function Background3D() {
     // Delay Canvas creation to let any old WebGL context fully clean up
     const timer = setTimeout(() => setCanvasKey(Date.now()), 100)
     
+    const scene = sceneRef.current
+    const gl = glRef.current
+    
     return () => {
       clearTimeout(timer)
       setCanvasKey(null)
 
-   
-      if (sceneRef.current) {
-        sceneRef.current.traverse((object: any) => {
-          if (object.geometry) object.geometry.dispose()
-          if (object.material) {
-            if (Array.isArray(object.material)) {
-              object.material.forEach((m: any) => m.dispose())
-            } else {
-              object.material.dispose()
+      if (scene) {
+        scene.traverse((object: THREE.Object3D) => {
+          if (object instanceof THREE.Mesh) {
+            if (object.geometry) object.geometry.dispose()
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((m: THREE.Material) => m.dispose())
+              } else {
+                object.material.dispose()
+              }
             }
           }
         })
       }
-      if (glRef.current) {
-        glRef.current.dispose()
-        glRef.current.forceContextLoss()
+      if (gl) {
+        gl.dispose()
+        gl.forceContextLoss()
       }
     }
   }, [])
@@ -111,8 +115,8 @@ export default function Background3D() {
           camera={{ position: [0, 0, 10], fov: 50 }} 
           dpr={[1, 2]}
           onCreated={({ gl, scene }) => {
-            (glRef as any).current = gl;
-            (sceneRef as any).current = scene;
+            glRef.current = gl;
+            sceneRef.current = scene;
           }}
         >
           <ambientLight intensity={0.2} />
