@@ -35,7 +35,7 @@
 <em>หน้าจอการตรวจสอบสิทธิ์ (Authorization )</em>
 
 ### The Arena (Gameplay)
-กระดาน OX 3D ที่ตอบสนองแบบ Real-time พร้อม Minimax AI
+กระดาน OX 3D ที่ตอบสนองแบบ Real-time และสามารถหมุนได้ 360 องศา ซูมเข้า-ออกได้ พร้อม Minimax AI ที่สามารถปรับระดับความฉลาดได้ 
 
 <kbd>
   <img src="ox-game-3d/public/Playgame.png" width="400" alt="Gameplay 1">
