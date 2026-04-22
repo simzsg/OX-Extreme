@@ -1,6 +1,7 @@
 "use client"
 
-import { useSession, signIn } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/react"
+import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 
 const Background3D = dynamic(() => import("./components/Background3D"), {
@@ -8,8 +9,53 @@ const Background3D = dynamic(() => import("./components/Background3D"), {
   loading: () => <div className="absolute inset-0 z-0 bg-black" />
 })
 
+interface MatchRecord {
+  id: string
+  result: 'WIN' | 'LOSS' | 'DRAW'
+  createdAt: string
+}
+
+const MatchHistoryModal = ({ matches, onClose, loading }: { matches: MatchRecord[], onClose: () => void, loading: boolean }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div className="bg-zinc-950 border border-red-900/50 w-full max-w-md rounded-xl overflow-hidden">
+      <div className="p-4 border-b border-red-900/30 flex justify-between items-center">
+        <h2 className="text-red-500 font-bold uppercase tracking-widest">Match History</h2>
+        <button onClick={onClose} className="text-neutral-500 hover:text-white">✕</button>
+      </div>
+      <div className="max-h-96 overflow-y-auto p-4">
+        {loading ? <p className="text-center text-neutral-500">Loading...</p> : (
+          <div className="space-y-2">
+            {matches.map((m) => (
+              <div key={m.id} className="flex justify-between p-3 bg-black/50 border border-red-900/20 rounded">
+                <span className={`font-bold ${m.result === 'WIN' ? 'text-emerald-500' : m.result === 'LOSS' ? 'text-red-500' : 'text-yellow-500'}`}>{m.result}</span>
+                <span className="text-neutral-500 text-sm">{new Date(m.createdAt).toLocaleDateString()}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)
+
 export default function LandingPage() {
   const { data: session } = useSession()
+  const [showHistory, setShowHistory] = useState(false)
+  const [matches, setMatches] = useState<MatchRecord[]>([])
+  const [loadingMatches, setLoadingMatches] = useState(false)
+
+  const fetchUserMatches = async () => {
+    setLoadingMatches(true)
+    try {
+      const res = await fetch("/api/user/matches")
+      const data = await res.json()
+      if (res.ok) setMatches(data.matches)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingMatches(false)
+    }
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden text-center">
@@ -34,35 +80,69 @@ export default function LandingPage() {
 
         {session ? (
           <div className="space-y-8 flex flex-col items-center">
-            <div className="flex gap-6 items-center bg-zinc-950/80 px-8 py-5 rounded-xl border border-red-900/50 mb-2 w-full justify-center shadow-inner">
-              <div className="text-center">
-                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest mb-1">Score</p>
-                <p className="text-4xl font-black text-white">{session.user?.score}</p>
-              </div>
-              <div className="w-px h-12 bg-red-900/50"></div>
-              <div className="text-center">
-                <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest mb-1">Streak</p>
-                <p className="text-4xl font-black text-red-500 text-glow-red">{session.user?.winStreak}</p>
-              </div>
+            {/* Extended Stats Card */}
+            <div className="w-full bg-zinc-950/80 border border-red-900/50 shadow-inner rounded-xl divide-y divide-red-900/20 overflow-hidden">
+               <div className="flex gap-6 items-center px-8 py-5 justify-center">
+                  <div className="text-center">
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] mb-1">Total Score</p>
+                    <p className="text-4xl font-black text-white">{session.user?.score}</p>
+                  </div>
+                  <div className="w-px h-10 bg-red-900/30"></div>
+                  <div className="text-center">
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] mb-1">Win Streak</p>
+                    <p className="text-4xl font-black text-red-500 text-glow-red">{session.user?.winStreak}</p>
+                  </div>
+               </div>
+               <div className="grid grid-cols-3 gap-0 text-center bg-black/40">
+                  <div className="py-3 border-r border-red-900/20">
+                    <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Wins</p>
+                    <p className="text-lg font-black text-emerald-500">{(session.user as any)?.wins || 0}</p>
+                  </div>
+                  <div className="py-3 border-r border-red-900/20">
+                    <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Losses</p>
+                    <p className="text-lg font-black text-red-500">{(session.user as any)?.losses || 0}</p>
+                  </div>
+                  <div className="py-3">
+                    <p className="text-[9px] text-neutral-600 font-bold uppercase tracking-widest">Draws</p>
+                    <p className="text-lg font-black text-yellow-500">{(session.user as any)?.draws || 0}</p>
+                  </div>
+               </div>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
               <button 
                 onClick={() => { window.location.href = "/play" }}
-                className="group relative px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-none font-bold text-xl transition-all box-glow-red flex items-center justify-center gap-3 overflow-hidden"
+                className="group relative px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-none font-bold text-xl transition-all box-glow-red flex items-center justify-center gap-3 overflow-hidden flex-1"
               >
                 <span className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full duration-500 ease-out z-0"></span>
                 <span className="relative z-10 uppercase tracking-widest">ENTER ARENA</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 relative z-10 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
               </button>
               
+              <button 
+                onClick={async () => {
+                   // Open Personal History (Logic handled by modal state below)
+                   setShowHistory(true);
+                   if (matches.length === 0) fetchUserMatches();
+                }}
+                className="px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-none font-bold text-lg transition-all border border-red-900/40 hover:border-red-500 uppercase tracking-widest flex items-center justify-center gap-2 flex-1"
+              >
+                MY HISTORY
+              </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
               <button
                 onClick={() => { window.location.href = "/leaderboard" }}
-                className="px-8 py-4 bg-transparent hover:bg-white/5 text-white rounded-none font-bold text-lg transition-all border border-neutral-700 hover:border-white uppercase tracking-widest flex items-center justify-center"
+                className="px-6 py-2 bg-transparent hover:bg-white/5 text-neutral-400 rounded-none font-bold text-sm transition-all border border-neutral-800 hover:border-zinc-500 uppercase tracking-widest flex items-center justify-center"
               >
                 LEADERBOARD
+              </button>
+              
+              <button 
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="px-6 py-2 bg-transparent hover:bg-red-950/20 text-red-900 hover:text-red-500 rounded-none font-bold text-sm transition-all border border-red-950 hover:border-red-900 uppercase tracking-widest flex items-center justify-center"
+              >
+                DISCONNECT
               </button>
             </div>
           </div>
@@ -101,6 +181,14 @@ export default function LandingPage() {
       <p className="mt-12 text-neutral-600 font-mono text-xs uppercase tracking-widest">
         Win: +1 | Lose: -1 | 3-Streak: +1
       </p>
+
+      {showHistory && (
+        <MatchHistoryModal 
+          matches={matches} 
+          onClose={() => setShowHistory(false)} 
+          loading={loadingMatches} 
+        />
+      )}
     </main>
   )
 }

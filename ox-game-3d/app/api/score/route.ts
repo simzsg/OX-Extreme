@@ -36,10 +36,19 @@ export async function POST(request: Request) {
       draws += 1
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: { score, winStreak, wins, losses, draws }
-    })
+    // Record Match History and Update User Stats in a transaction
+    const [updatedUser] = await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { score, winStreak, wins, losses, draws }
+      }),
+      prisma.match.create({
+        data: {
+          userId: user.id,
+          result: result === "win" ? "WIN" : result === "lose" ? "LOSS" : "DRAW"
+        }
+      })
+    ])
 
     return NextResponse.json({
       score: updatedUser.score,

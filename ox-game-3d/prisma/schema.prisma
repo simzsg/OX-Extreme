@@ -44,8 +44,17 @@ model User {
   wins          Int       @default(0)
   losses        Int       @default(0)
   draws         Int       @default(0)
+  matches       Match[]
   accounts      Account[]
   sessions      Session[]
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  userId    String
+  result    String   
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

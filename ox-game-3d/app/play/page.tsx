@@ -188,7 +188,7 @@ export default function PlayPage() {
                     <span className={`text-[11px] font-black uppercase tracking-widest ${
                       res === "win" ? "text-green-500" : res === "lose" ? "text-red-500" : "text-white"
                     }`}>
-                      {res}
+                      {res === "tie" ? "DRAW" : res}
                     </span>
                   </div>
                 ))
@@ -270,19 +270,30 @@ export default function PlayPage() {
 
       {winner && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md">
-          <div className="bg-zinc-950 p-12-0 rounded-none border-t-4 border-b-4 border-red-600 shadow-[0_0_50px_rgba(239,68,68,0.2)] flex flex-col items-center max-w-lg w-full text-center py-12 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50"></div>
-            <h2 className={`text-6xl md:text-7xl font-black mb-4 tracking-tighter uppercase ${winner === playerSide ? "text-red-500 text-glow-red" : winner !== "Tie" ? "text-zinc-600" : "text-white"
+          <div className={`bg-zinc-950 px-12 rounded-none border-t-4 border-b-4 flex flex-col items-center max-w-lg w-full text-center py-12 relative overflow-hidden ${
+              winner === playerSide 
+                ? "animate-success border-emerald-500" 
+                : winner !== "Tie" 
+                  ? "animate-failure border-red-600" 
+                  : "animate-draw border-zinc-500"
+            }`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50"></div>
+            <h2 className={`text-6xl md:text-7xl font-black mb-4 tracking-tighter uppercase ${
+                winner === playerSide 
+                  ? "text-emerald-400 text-glow-green" 
+                  : winner !== "Tie" 
+                    ? "text-zinc-100 text-glow-red" 
+                    : "text-cyan-400 text-glow-cyan"
               }`}>
               {winner === playerSide ? "VICTORY" : winner !== "Tie" ? "DEFEATED" : "DRAW"}
             </h2>
 
-            <p className="text-lg text-neutral-400 mb-10 font-mono">
+            <p className="text-lg text-neutral-400 mb-10 font-mono tracking-tight">
               {winner === playerSide
                 ? "MISSION ACCOMPLISHED. CPU DESTROYED."
                 : winner !== "Tie"
                   ? "SYSTEM FAILURE. CPU IS SUPERIOR."
-                  : "STALEMATE. NO RESOLUTION."}
+                  : "STALEMATE. NO RESOLUTION FOUND."}
             </p>
 
             <div className="flex flex-col gap-4 w-full px-12">

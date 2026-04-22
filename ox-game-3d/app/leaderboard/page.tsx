@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import Background3D from "../components/Background3D"
 
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions)
@@ -12,8 +13,9 @@ export default async function LeaderboardPage() {
   })
 
   return (
-    <main className="min-h-screen flex flex-col items-center p-8 lg:p-24 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-black via-zinc-950 to-red-950">
-      <div className="w-full max-w-4xl bg-black/80 backdrop-blur-md rounded-none p-8 shadow-2xl border border-red-900/40 relative">
+    <main className="min-h-screen relative flex flex-col items-center p-8 lg:p-24 overflow-hidden bg-[radial-gradient(circle_at_top,_#09090b_0%,_#000000_50%,_#450a0a_100%)]">
+      <Background3D />
+      <div className="w-full max-w-4xl bg-black/80 backdrop-blur-md rounded-none p-8 shadow-2xl border border-red-900/40 relative z-10">
         <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
         <div className="flex justify-between items-center mb-10">
           <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-widest drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
@@ -23,7 +25,7 @@ export default async function LeaderboardPage() {
             href="/"
             className="px-6 py-2 bg-transparent hover:bg-red-900/30 text-red-500 rounded-none transition-colors border border-red-900 hover:border-red-500 uppercase tracking-widest text-sm font-bold flex items-center justify-center"
           >
-            System Core
+            BACK
           </Link>
         </div>
         
