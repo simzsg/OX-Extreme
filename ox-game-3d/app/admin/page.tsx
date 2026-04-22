@@ -157,11 +157,11 @@ export default function AdminPage() {
 
   if (!isLogged) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-6 relative bg-black overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center p-4 md:p-6 relative bg-black overflow-hidden">
         <Background3D />
-        <div className="z-10 bg-black/80 backdrop-blur-xl p-10 border border-red-500/30 max-w-md w-full relative">
+        <div className="z-10 bg-black/80 backdrop-blur-xl p-6 md:p-10 border border-red-500/30 max-w-[calc(100vw-2rem)] md:max-w-md w-full relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
-          <h1 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">ADMIN CENTER</h1>
+          <h1 className="text-2xl md:text-3xl font-black text-white mb-2 uppercase tracking-tighter">ADMIN CENTER</h1>
           <p className="text-red-500/60 text-xs font-mono mb-8 uppercase tracking-widest">Authorized Personnel Only</p>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -208,11 +208,11 @@ export default function AdminPage() {
       
       <div className="z-10 w-full max-w-7xl mx-auto flex flex-col h-full bg-black/60 border border-emerald-500/20 backdrop-blur-md relative shadow-2xl">
        
-        <div className="p-8 border-b border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 bg-zinc-950/50">
+        <div className="p-6 md:p-8 border-b border-white/5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 md:gap-8 bg-zinc-950/50">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">ADMIN DASHBOARD</h1>
+              <h1 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase">ADMIN DASHBOARD</h1>
             </div>
             <p className="text-emerald-500/60 text-[10px] uppercase tracking-[0.3em] font-bold italic text-white flex items-center gap-2">
                <span className="opacity-20">|</span> TOTAL PLAYERS: {players.length}
@@ -248,8 +248,8 @@ export default function AdminPage() {
         </div>
 
        
-        <div className="flex-1 overflow-auto p-8">
-          <div className="border border-white/5 bg-black/40 shadow-inner">
+        <div className="flex-1 overflow-x-auto p-4 md:p-8">
+          <div className="border border-white/5 bg-black/40 shadow-inner min-w-[800px] lg:min-w-0">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-zinc-950 text-[10px] text-zinc-500 uppercase tracking-[0.2em] border-b border-white/5">

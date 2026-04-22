@@ -116,11 +116,11 @@ export default function PlayPage() {
 
   return (
     <main className="w-full h-screen relative bg-[#09090b] overflow-hidden flex flex-col">
-      <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-10 bg-gradient-to-b from-black to-transparent pointer-events-none">
-        <div className="flex gap-4 items-center bg-black/60 backdrop-blur-xl rounded-none px-6 py-3 border border-red-500/30 pointer-events-auto shadow-[0_0_20px_rgba(239,68,68,0.1)] relative group">
+      <div className="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-10 bg-gradient-to-b from-black to-transparent pointer-events-none">
+        <div className="flex gap-2 md:gap-4 items-center bg-black/60 backdrop-blur-xl rounded-none px-3 py-2 md:px-6 md:py-3 border border-red-500/30 pointer-events-auto shadow-[0_0_20px_rgba(239,68,68,0.1)] relative group">
           <div className="absolute -left-[2px] top-0 h-full w-[4px] bg-red-600"></div>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-red-500/50 overflow-hidden bg-zinc-900 flex-shrink-0 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-red-500/50 overflow-hidden bg-zinc-900 flex-shrink-0 shadow-[0_0_15px_rgba(239,68,68,0.3)] relative">
               {session.user?.image ? (
                 <Image src={session.user.image} alt="Profile" fill className="object-cover" />
               ) : (
@@ -128,24 +128,24 @@ export default function PlayPage() {
               )}
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] text-red-500/70 font-black uppercase tracking-[0.2em]">Live Connection</span>
-              <span className="text-xl font-bold text-white uppercase tracking-tighter italic">{session.user?.name || "Player"}</span>
+              <span className="text-[8px] md:text-[10px] text-red-500/70 font-black uppercase tracking-[0.2em]">Live</span>
+              <span className="text-sm md:text-xl font-bold text-white uppercase tracking-tighter italic truncate max-w-[80px] md:max-w-none">{session.user?.name || "Player"}</span>
             </div>
           </div>
-          <div className="w-px h-10 bg-red-500/20 mx-2"></div>
-          <div className="text-center w-20">
-            <span className="block text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Score</span>
-            <span className="block font-black text-white text-2xl tracking-tighter">{scoreUpdate ? scoreUpdate.score : session.user?.score}</span>
+          <div className="w-px h-8 md:h-10 bg-red-500/20 mx-1 md:mx-2"></div>
+          <div className="text-center w-12 md:w-20">
+            <span className="block text-[8px] md:text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Score</span>
+            <span className="block font-black text-white text-lg md:text-2xl tracking-tighter">{scoreUpdate ? scoreUpdate.score : session.user?.score}</span>
           </div>
-          <div className="text-center w-20">
-            <span className="block text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Streak</span>
-            <span className="block font-black text-red-600 text-glow-red text-2xl tracking-tighter">{scoreUpdate ? scoreUpdate.streak : session.user?.winStreak}</span>
+          <div className="text-center w-12 md:w-20">
+            <span className="block text-[8px] md:text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Streak</span>
+            <span className="block font-black text-red-600 text-glow-red text-lg md:text-2xl tracking-tighter">{scoreUpdate ? scoreUpdate.streak : session.user?.winStreak}</span>
           </div>
         </div>
 
         <button
           onClick={() => { window.location.href = "/" }}
-          className="bg-zinc-900/80 hover:bg-red-950/80 backdrop-blur-md text-white px-6 py-3 rounded-none font-bold transition-all border border-neutral-800 hover:border-red-500 pointer-events-auto uppercase tracking-widest text-sm"
+          className="bg-zinc-900/80 hover:bg-red-950/80 backdrop-blur-md text-white px-4 py-2 md:px-6 md:py-3 rounded-none font-bold transition-all border border-neutral-800 hover:border-red-500 pointer-events-auto uppercase tracking-widest text-xs md:text-sm"
         >
           Exit
         </button>
@@ -245,25 +245,25 @@ export default function PlayPage() {
 
     
       {!playerSide && (
-        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-xl">
-          <div className="flex flex-col items-center">
-            <h2 className="text-4xl font-black text-white mb-12 tracking-[0.5em] uppercase italic">Choose Your Protocol</h2>
-            <div className="flex gap-12">
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-xl p-6">
+          <div className="flex flex-col items-center w-full">
+            <h2 className="text-2xl md:text-4xl font-black text-white mb-8 md:mb-12 tracking-[0.3em] md:tracking-[0.5em] uppercase italic text-center">Choose Your Protocol</h2>
+            <div className="flex flex-col sm:flex-row gap-8 md:gap-12">
               <button
                 onClick={() => setPlayerSide("X")}
-                className="group relative w-40 h-40 border-2 border-zinc-800 hover:border-red-600 transition-all duration-500 flex items-center justify-center hover:scale-110 active:scale-95"
+                className="group relative w-32 h-32 md:w-40 md:h-40 border-2 border-zinc-800 hover:border-red-600 transition-all duration-500 flex items-center justify-center hover:scale-110 active:scale-95"
               >
                 <div className="absolute inset-0 bg-red-600/0 group-hover:bg-red-600/5 transition-colors"></div>
-                <span className="text-8xl font-black text-zinc-700 group-hover:text-red-500 transition-colors">X</span>
-                <span className="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 font-bold tracking-widest text-sm">INITIATOR</span>
+                <span className="text-6xl md:text-8xl font-black text-zinc-700 group-hover:text-red-500 transition-colors">X</span>
+                <span className="absolute -bottom-8 md:bottom-[-2.5rem] opacity-0 group-hover:opacity-100 transition-opacity text-red-500 font-bold tracking-widest text-[10px] md:text-sm">INITIATOR</span>
               </button>
               <button
                 onClick={() => setPlayerSide("O")}
-                className="group relative w-40 h-40 border-2 border-zinc-800 hover:border-red-600 transition-all duration-500 flex items-center justify-center hover:scale-110 active:scale-95"
+                className="group relative w-32 h-32 md:w-40 md:h-40 border-2 border-zinc-800 hover:border-red-600 transition-all duration-500 flex items-center justify-center hover:scale-110 active:scale-95"
               >
                 <div className="absolute inset-0 bg-red-600/0 group-hover:bg-red-600/5 transition-colors"></div>
-                <span className="text-8xl font-black text-zinc-700 group-hover:text-red-500 transition-colors">O</span>
-                <span className="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 font-bold tracking-widest text-sm">DEFENDER</span>
+                <span className="text-6xl md:text-8xl font-black text-zinc-700 group-hover:text-red-500 transition-colors">O</span>
+                <span className="absolute -bottom-8 md:bottom-[-2.5rem] opacity-0 group-hover:opacity-100 transition-opacity text-red-500 font-bold tracking-widest text-[10px] md:text-sm">DEFENDER</span>
               </button>
             </div>
           </div>

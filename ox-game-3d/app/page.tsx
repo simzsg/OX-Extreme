@@ -72,7 +72,7 @@ export default function LandingPage() {
     <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden text-center">
       <Background3D />
       
-      <div className="z-10 bg-black/60 backdrop-blur-2xl p-10 md:p-16 rounded-3xl border border-red-500/30 box-glow-red max-w-2xl w-full relative">
+      <div className="z-10 bg-black/60 backdrop-blur-2xl p-6 md:p-16 rounded-3xl border border-red-500/30 box-glow-red max-w-2xl w-full relative">
         <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-red-500"></div>
         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-red-500"></div>
 
@@ -80,7 +80,7 @@ export default function LandingPage() {
           CYBERPUNK EDITION
         </div>
         
-        <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+        <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           OX<span className="text-red-500 text-glow-red"> GAME</span>
         </h1>
         
@@ -123,7 +123,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
               <button 
                 onClick={() => { window.location.href = "/play" }}
-                className="group relative px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-none font-bold text-xl transition-all box-glow-red flex items-center justify-center gap-3 overflow-hidden flex-1"
+                className="group relative px-8 py-3 md:py-4 bg-red-600 hover:bg-red-500 text-white rounded-none font-bold text-xl transition-all box-glow-red flex items-center justify-center gap-3 overflow-hidden flex-1"
               >
                 <span className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full duration-500 ease-out z-0"></span>
                 <span className="relative z-10 uppercase tracking-widest">ENTER ARENA</span>
@@ -135,7 +135,7 @@ export default function LandingPage() {
                    setShowHistory(true);
                    if (matches.length === 0) fetchUserMatches();
                 }}
-                className="px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-none font-bold text-lg transition-all border border-red-900/40 hover:border-red-500 uppercase tracking-widest flex items-center justify-center gap-2 flex-1"
+                className="px-8 py-3 md:py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-none font-bold text-lg transition-all border border-red-900/40 hover:border-red-500 uppercase tracking-widest flex items-center justify-center gap-2 flex-1"
               >
                 MY HISTORY
               </button>
@@ -163,7 +163,7 @@ export default function LandingPage() {
               <span className="text-red-500 font-bold text-xs uppercase tracking-widest mb-4 block">Authorization Pipelines</span>
               <button 
                 onClick={() => signIn()}
-                className="w-full max-w-sm mx-auto px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-none font-bold text-lg transition-all flex items-center justify-center border border-neutral-700 hover:border-white uppercase tracking-widest"
+                className="w-full max-w-sm mx-auto px-8 py-3 md:py-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-none font-bold text-lg transition-all flex items-center justify-center border border-neutral-700 hover:border-white uppercase tracking-widest"
               >
                 LOGIN
               </button>
@@ -180,7 +180,7 @@ export default function LandingPage() {
                     redirect: true
                   })
                 }}
-                className="w-full max-w-sm mx-auto px-8 py-4 bg-transparent hover:bg-red-950/50 text-red-400 rounded-none font-black text-lg transition-all flex items-center justify-center gap-3 border border-red-900 hover:border-red-500 uppercase tracking-widest box-glow-red"
+                className="w-full max-w-sm mx-auto px-8 py-3 md:py-4 bg-transparent hover:bg-red-950/50 text-red-400 rounded-none font-black text-lg transition-all flex items-center justify-center gap-3 border border-red-900 hover:border-red-500 uppercase tracking-widest box-glow-red"
               >
                 Guest Access 
               </button>

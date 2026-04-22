@@ -193,6 +193,28 @@ function Scene() {
 
 export default function Game3D() {
   const glRef = useRef<THREE.WebGLRenderer>(null)
+  const [cameraConfig, setCameraConfig] = useState({ position: [0, 6, 6] as [number, number, number], fov: 45 })
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768 || window.innerHeight > window.innerWidth
+      if (isMobile) {
+        setCameraConfig({
+          position: [0, 8, 8],
+          fov: 55
+        })
+      } else {
+        setCameraConfig({
+          position: [0, 6, 6],
+          fov: 45
+        })
+      }
+    }
+
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     const gl = glRef.current
@@ -208,12 +230,12 @@ export default function Game3D() {
     <div className="w-full h-full relative bg-black">
       <Canvas 
         shadows 
-        camera={{ position: [0, 6, 6], fov: 45 }}
+        camera={{ position: cameraConfig.position, fov: cameraConfig.fov }}
         onCreated={({ gl }) => { 
           glRef.current = gl;
         }}
         gl={{ antialias: true, stencil: false, depth: true }}
-        dpr={1}
+        dpr={window.devicePixelRatio > 1 ? 1.5 : 1}
       >
         <Scene />
       </Canvas>

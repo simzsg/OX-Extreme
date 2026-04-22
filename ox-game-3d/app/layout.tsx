@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-gradient-to-br from-black via-zinc-950 to-red-950 text-white selection:bg-red-500/30`}>
         <Script id="navigation-checker" strategy="beforeInteractive">
           {`
