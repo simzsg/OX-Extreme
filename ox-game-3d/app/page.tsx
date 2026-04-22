@@ -39,7 +39,17 @@ const MatchHistoryModal = ({ matches, onClose, loading }: { matches: MatchRecord
             {matches.map((m) => (
               <div key={m.id} className="flex justify-between p-3 bg-black/50 border border-red-900/20 rounded">
                 <span className={`font-bold ${m.result === 'WIN' ? 'text-emerald-500' : m.result === 'LOSS' ? 'text-red-500' : 'text-yellow-500'}`}>{m.result}</span>
-                <span className="text-neutral-500 text-sm">{new Date(m.createdAt).toLocaleDateString()}</span>
+                <span className="text-neutral-500 text-sm">
+                  {new Date(m.createdAt).toLocaleString('en-GB', {
+                    timeZone: 'Asia/Bangkok',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}
+                </span>
               </div>
             ))}
           </div>
